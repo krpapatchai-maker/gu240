@@ -1,0 +1,186 @@
+-- สร้าง ScreenGui หลัก
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "ModernMusicUI"
+ScreenGui.Parent = game:GetService("CoreGui")
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+-- Function สร้างขอบมน (UICorner) แบบรวดเร็ว
+local function createCorner(parent, radius)
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0, radius)
+	corner.Parent = parent
+	return corner
+end
+
+-- หน้าต่างหลัก (Main Frame) - ปรับความกว้างเพิ่มขึ้นเพื่อให้มีพื้นที่สำหรับเลข 240 ด้านซ้าย
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+MainFrame.Position = UDim2.new(0.5, -165, 0.5, -100)
+MainFrame.Size = UDim2.new(0, 330, 0, 200)
+MainFrame.Active = true
+MainFrame.Draggable = true -- ลากได้
+
+createCorner(MainFrame, 12)
+
+-- เพิ่ม Stroke (ขอบ) ให้เฟรมดูโดดเด่นขึ้น
+local UIStroke = Instance.new("UIStroke")
+UIStroke.Parent = MainFrame
+UIStroke.Color = Color3.fromRGB(50, 50, 70)
+UIStroke.Thickness = 1
+UIStroke.Transparency = 0.5
+
+-- แถบหัวข้อ (Title Bar)
+local TitleBar = Instance.new("Frame")
+TitleBar.Name = "TitleBar"
+TitleBar.Parent = MainFrame
+TitleBar.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TitleBar.Size = UDim2.new(1, 0, 0, 40)
+
+createCorner(TitleBar, 12)
+
+local TitleCover = Instance.new("Frame")
+TitleCover.Parent = TitleBar
+TitleCover.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+TitleCover.Position = UDim2.new(0, 0, 1, -10)
+TitleCover.Size = UDim2.new(1, 0, 0, 10)
+TitleCover.BorderSizePixel = 0
+
+-- UIGradient สำหรับ TitleBar
+local TitleGradient = Instance.new("UIGradient")
+TitleGradient.Color = ColorSequence.new{
+	ColorSequenceKeypoint.new(0.0, Color3.fromRGB(40, 40, 55)),
+	ColorSequenceKeypoint.new(1.0, Color3.fromRGB(30, 30, 45))
+}
+TitleGradient.Rotation = 90
+TitleGradient.Parent = TitleBar
+
+-- ข้อความ "240" เลขสวยๆ ไว้ที่มุมซ้ายสุดของแถบหัวข้อ
+local NumberLabel = Instance.new("TextLabel")
+NumberLabel.Name = "NumberLabel"
+NumberLabel.Parent = TitleBar
+NumberLabel.BackgroundTransparency = 1
+NumberLabel.Position = UDim2.new(0, 12, 0, 0)
+NumberLabel.Size = UDim2.new(0, 40, 1, 0)
+NumberLabel.Font = Enum.Font.GothamBold
+NumberLabel.Text = "240"
+NumberLabel.TextColor3 = Color3.fromRGB(0, 220, 255) -- สีฟ้าเรืองแสงโดดเด่น
+NumberLabel.TextSize = 16
+NumberLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+-- ข้อความหัวข้อหลัก
+local TitleText = Instance.new("TextLabel")
+TitleText.Parent = TitleBar
+TitleText.BackgroundTransparency = 1
+TitleText.Position = UDim2.new(0, 55, 0, 0)
+TitleText.Size = UDim2.new(1, -95, 1, 0)
+TitleText.Font = Enum.Font.GothamSemibold
+TitleText.Text = "MUSIC PLAYER"
+TitleText.TextColor3 = Color3.fromRGB(220, 220, 230)
+TitleText.TextSize = 15
+TitleText.TextXAlignment = Enum.TextXAlignment.Left
+
+-- ปุ่มปิด (Close Button)
+local CloseButton = Instance.new("TextButton")
+CloseButton.Name = "CloseButton"
+CloseButton.Parent = TitleBar
+CloseButton.BackgroundColor3 = Color3.fromRGB(255, 80, 80)
+CloseButton.Position = UDim2.new(1, -35, 0, 8)
+CloseButton.Size = UDim2.new(0, 24, 0, 24)
+CloseButton.Font = Enum.Font.GothamBold
+CloseButton.Text = "×"
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.TextSize = 18
+
+createCorner(CloseButton, 12)
+
+-- เอฟเฟกต์ Hover ปุ่มปิด
+CloseButton.MouseEnter:Connect(function()
+	game:GetService("TweenService"):Create(CloseButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(255, 100, 100)}):Play()
+end)
+CloseButton.MouseLeave:Connect(function()
+	game:GetService("TweenService"):Create(CloseButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(255, 80, 80)}):Play()
+end)
+
+-- Container สำหรับเนื้อหาด้านใน
+local ContentContainer = Instance.new("Frame")
+ContentContainer.Name = "ContentContainer"
+ContentContainer.Parent = MainFrame
+ContentContainer.BackgroundTransparency = 1
+ContentContainer.Position = UDim2.new(0, 0, 0, 45)
+ContentContainer.Size = UDim2.new(1, 0, 1, -45)
+
+-- กล่องใส่ Sound ID
+local IDTextBox = Instance.new("TextBox")
+IDTextBox.Name = "IDTextBox"
+IDTextBox.Parent = ContentContainer
+IDTextBox.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+IDTextBox.Position = UDim2.new(0.1, 0, 0.1, 0)
+IDTextBox.Size = UDim2.new(0.8, 0, 0, 45)
+IDTextBox.Font = Enum.Font.Gotham
+IDTextBox.PlaceholderText = "ใส่ไอดีครับไอควาย"
+IDTextBox.PlaceholderColor3 = Color3.fromRGB(100, 100, 120)
+IDTextBox.Text = ""
+IDTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+IDTextBox.TextSize = 14
+IDTextBox.ClearTextOnFocus = false
+
+createCorner(IDTextBox, 8)
+
+local TextBoxStroke = Instance.new("UIStroke")
+TextBoxStroke.Parent = IDTextBox
+TextBoxStroke.Color = Color3.fromRGB(60, 60, 80)
+TextBoxStroke.Thickness = 1
+
+IDTextBox.FocusLost:Connect(function()
+	game:GetService("TweenService"):Create(TextBoxStroke, TweenInfo.new(0.2), {Color = Color3.fromRGB(60, 60, 80)}):Play()
+end)
+IDTextBox.Focused:Connect(function()
+	game:GetService("TweenService"):Create(TextBoxStroke, TweenInfo.new(0.2), {Color = Color3.fromRGB(0, 150, 255)}):Play()
+end)
+
+-- ปุ่ม Play
+local PlayButton = Instance.new("TextButton")
+PlayButton.Name = "PlayButton"
+PlayButton.Parent = ContentContainer
+PlayButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+PlayButton.Position = UDim2.new(0.25, 0, 0.6, 0)
+PlayButton.Size = UDim2.new(0.5, 0, 0, 45)
+PlayButton.Font = Enum.Font.GothamBold
+PlayButton.Text = "PLAY"
+PlayButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+PlayButton.TextSize = 15
+
+createCorner(PlayButton, 8)
+
+local PlayGradient = Instance.new("UIGradient")
+PlayGradient.Color = ColorSequence.new{
+	ColorSequenceKeypoint.new(0.0, Color3.fromRGB(120, 255, 120)),
+	ColorSequenceKeypoint.new(1.0, Color3.fromRGB(0, 200, 0))
+}
+PlayGradient.Rotation = 90
+PlayGradient.Parent = PlayButton
+
+PlayButton.MouseEnter:Connect(function()
+	game:GetService("TweenService"):Create(PlayGradient, TweenInfo.new(0.2), {Transparency = NumberSequence.new{
+		NumberSequenceKeypoint.new(0.0, 0.2),
+		NumberSequenceKeypoint.new(1.0, 0.2)
+	}}):Play()
+end)
+PlayButton.MouseLeave:Connect(function()
+	game:GetService("TweenService"):Create(PlayGradient, TweenInfo.new(0.2), {Transparency = NumberSequence.new{
+		NumberSequenceKeypoint.new(0.0, 0.0),
+		NumberSequenceKeypoint.new(1.0, 0.0)
+	}}):Play()
+end)
+
+-- ฟังก์ชันปุ่มปิด
+CloseButton.MouseButton1Click:Connect(function()
+	ScreenGui:Destroy()
+end)
+
+-- ฟังก์ชันปุ่ม Play
+PlayButton.MouseButton1Click:Connect(function()
+	print("Playing ID: " .. IDTextBox.Text)
+end)
